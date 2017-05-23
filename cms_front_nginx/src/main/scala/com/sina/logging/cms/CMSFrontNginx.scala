@@ -8,6 +8,8 @@ import org.apache.spark.streaming.dstream.{DStream, InputDStream}
 import org.apache.spark.streaming.kafka.KafkaUtils
 import org.apache.spark.streaming.{Seconds, StreamingContext}
 import org.apache.spark.{SparkConf, SparkContext}
+import org.elasticsearch.spark.streaming._
+
 /**
   * Created by James on 2017/5/20.
   */
@@ -98,7 +100,7 @@ object CMSFrontNginx {
 
     //2、创建SSC
     val conf = new SparkConf()
-    conf.setAppName("cms_front_nginx_test")
+    conf.setAppName("cms_front_nginx_log_compute")
     conf.set("es.nodes", "10.211.103.202,10.211.103.212,10.211.103.222")
     //conf.setMaster("local[4]")
     //conf.setMaster("spark://10.211.103.201:7077")
@@ -116,21 +118,22 @@ object CMSFrontNginx {
       Map[String, String](
         "metadata.broker.list" -> brokers,
         //"group.id" -> "spark_receiver_cms_front_nginx",
-        "group.id" -> "spark_receiver_cms_front_nginx_test",
+        "group.id" -> "spark_receiver_cms_front_nginx",
         "zookeeper.connect" -> "10.13.88.190:2181"
       )
     val records = KafkaUtils.createDirectStream[String, String, StringDecoder, StringDecoder](ssc, kafkaParams, topicsSet)
 
     //4、执行计算
 
-    //al result1 = computeStatusCount(cleanRecords(records))
+    val result1 = computeStatusCount(cleanRecords(records))
     val result2 = computeRequestTime(cleanRecords(records))
 
     //5、保存结果
 
-    //result1.saveToEs("spark_cms_front_nginx_status-{esIndex}/logs")
-    //result2.saveToEs("spark_cms_front_nginx_request-{esIndex}/logs")
-    result2.print()
+    result1.saveToEs("spark_cms_front_nginx_status-{esIndex}/logs")
+    result2.saveToEs("spark_cms_front_nginx_request-{esIndex}/logs")
+
+    //result2.print()
 
 
     ssc.start()
@@ -142,6 +145,6 @@ object CMSFrontNginx {
 }
 
 //spark-submit --master spark://10.211.103.201:7077 --executor-memory 4G --total-executor-cores 10 cms_front_nginx-1.0-SNAPSHOT.jar
-//spark-submit --master spark://10.211.103.201:7077 --deploy-mode cluster --supervise --executor-memory 4G --total-executor-cores 10 http://.../cms_front_nginx-1.0-SNAPSHOT.jar
-
+//spark-submit --master spark://10.211.103.201:7077 --deploy-mode cluster --supervise --executor-memory 3G --total-executor-cores 9 http://.../cms_front_nginx-1.0-SNAPSHOT.jar
+//spark-submit --class com.sina.logging.cms.CMSFrontNginx --master spark://10.211.103.201:7077,10.211.103.211:7077,10.211.103.221:7077 --deploy-mode cluster --supervise --executor-memory 3G --total-executor-cores 9 http://10.211.103.201:8000/cms_front_nginx-1.0-SNAPSHOT.jar
 
