@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat
 import java.util.{Date, Locale}
 
 import kafka.serializer.StringDecoder
+import org.apache.log4j.Logger
 import org.apache.spark.streaming.dstream.{DStream, InputDStream}
 import org.apache.spark.streaming.kafka.KafkaUtils
 import org.apache.spark.streaming.{Seconds, StreamingContext}
@@ -14,6 +15,9 @@ import org.elasticsearch.spark.streaming._
   * Created by James on 2017/5/20.
   */
 object CMSFrontNginx {
+
+  @transient lazy val logger = Logger.getLogger(getClass.getName)
+
   def cleanRecords(records:InputDStream[(String,String)]):DStream[(Date,Int,String,Double,String,String)]={
     records
       .map(line =>
@@ -84,6 +88,8 @@ object CMSFrontNginx {
   }
 
   def actionByDirect(args: Array[String]): Unit = {
+   /* logger.info("people from string")
+    logger.warn("not enough fields in this string")*/
 
     //1、参数获取
     if (args.length < 2) {
