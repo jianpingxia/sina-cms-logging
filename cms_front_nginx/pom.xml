@@ -17,29 +17,25 @@
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-library</artifactId>
             <version>${scala.version}</version>
-            <scope>provided</scope>
-            <optional>false</optional>
+             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-compiler</artifactId>
             <version>${scala.version}</version>
             <scope>provided</scope>
-            <optional>false</optional>
         </dependency>
         <dependency>
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-reflect</artifactId>
             <version>${scala.version}</version>
-            <scope>provided</scope>
-            <optional>false</optional>
+             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.spark</groupId>
             <artifactId>spark-streaming_2.11</artifactId>
             <version>${spack.version}</version>
-            <scope>provided</scope>
-            <optional>false</optional>
+             <scope>provided</scope>
             <exclusions>
                 <exclusion>
                     <groupId>org.scala-lang</groupId>
